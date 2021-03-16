@@ -13,7 +13,42 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_lineEdit_textEdited(const QString &arg1)
+QString getNameBook(std::string line)
 {
-    ui->label->setText(arg1);
+    std::string str_result;
+    for (int i = 0; line[i] != '|'; ++i) {
+        str_result += line[i];
+    }
+    QString temp = "";
+    for (size_t i = 0; i < line.length(); ++i) {
+        temp.append(line[i]);
+    }
+    return temp;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+
+}
+
+void MainWindow::on_lineEdit_textEdited(const QString &arg1) //toble QString can not be compared with std::string
+{
+    QKeyEvent *event;
+    QString name_book;
+    std::string line;
+    std::ifstream database ("database.txt");
+    if (event->key() == Qt::Key_Enter)
+    {
+    while (getline(database, line))
+    {
+        name_book = getNameBook(line);
+        if (name_book == arg1) {
+            ui->textEdit->setText(name_book);
+            break;
+        } else {
+            //ui->textEdit->setText("name book not found!");
+            ui->textEdit->setText("book not found");
+        }
+    }
+    }
 }

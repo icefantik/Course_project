@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTextEdit>
+#include <QKeyEvent>
+#include <QTextStream>
 #include <fstream>
 
 QT_BEGIN_NAMESPACE
@@ -18,7 +21,7 @@ public:
 
 private slots:
     void on_lineEdit_textEdited(const QString &arg1);
-
+    void keyPressEvent(QKeyEvent *event);
 private:
     Ui::MainWindow *ui;
 };
