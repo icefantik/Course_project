@@ -5,6 +5,11 @@
 #include <QTextEdit>
 #include <QKeyEvent>
 #include <QTextStream>
+#include <QMessageBox>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 #include <fstream>
 
 QT_BEGIN_NAMESPACE
@@ -20,8 +25,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_lineEdit_textEdited(const QString &arg1);
     void keyPressEvent(QKeyEvent *event);
+
 private:
     Ui::MainWindow *ui;
 };

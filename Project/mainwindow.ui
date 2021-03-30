@@ -50,13 +50,13 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTableView" name="tableView">
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>180</y>
+      <y>170</y>
       <width>351</width>
-      <height>70</height>
+      <height>192</height>
      </rect>
     </property>
    </widget>
