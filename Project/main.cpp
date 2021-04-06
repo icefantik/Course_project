@@ -1,16 +1,20 @@
 #include "mainwindow.h"
-#include <QApplication>
+#include "loginwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
 
-    //Подключаем базу данных
-    QSqlDatabase db;
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/student/database.db3");
-    db.open();
-    w.show();
+    LoginWindow login_window;
+    login_window.open();
+    if (login_window.close_window == 1) {
+        login_window.close();
+    }
+    //Connect database with books
+    QSqlDatabase db_lib = QSqlDatabase::addDatabase("QSQLITE", "lib");
+    db_lib.setDatabaseName("/home/peter/Desktop/Project/lib.db");
+    db_lib.open();
+    QSqlDatabase::removeDatabase("QSQLITE");
+
     return a.exec();
 }

@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -19,6 +20,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableView>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -28,9 +30,14 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QPushButton *pushButton;
-    QLineEdit *lineEdit;
+    QWidget *widget;
+    QVBoxLayout *verticalLayout_2;
+    QHBoxLayout *horizontalLayout;
     QLabel *label;
+    QLineEdit *lineEdit;
+    QVBoxLayout *verticalLayout;
     QTableView *tableView;
+    QPushButton *EndOrderFormat;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -38,25 +45,52 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(551, 412);
+        MainWindow->resize(582, 368);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(460, 0, 89, 25));
-        lineEdit = new QLineEdit(centralwidget);
-        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-        lineEdit->setGeometry(QRect(100, 140, 351, 25));
-        label = new QLabel(centralwidget);
+        pushButton->setGeometry(QRect(500, 0, 80, 25));
+        widget = new QWidget(centralwidget);
+        widget->setObjectName(QString::fromUtf8("widget"));
+        widget->setGeometry(QRect(100, 40, 381, 260));
+        verticalLayout_2 = new QVBoxLayout(widget);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        label = new QLabel(widget);
         label->setObjectName(QString::fromUtf8("label"));
-        label->setGeometry(QRect(100, 120, 67, 17));
-        tableView = new QTableView(centralwidget);
+
+        horizontalLayout->addWidget(label);
+
+        lineEdit = new QLineEdit(widget);
+        lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
+
+        horizontalLayout->addWidget(lineEdit);
+
+
+        verticalLayout_2->addLayout(horizontalLayout);
+
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        tableView = new QTableView(widget);
         tableView->setObjectName(QString::fromUtf8("tableView"));
-        tableView->setGeometry(QRect(100, 170, 351, 192));
+
+        verticalLayout->addWidget(tableView);
+
+        EndOrderFormat = new QPushButton(widget);
+        EndOrderFormat->setObjectName(QString::fromUtf8("EndOrderFormat"));
+
+        verticalLayout->addWidget(EndOrderFormat);
+
+
+        verticalLayout_2->addLayout(verticalLayout);
+
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 551, 22));
+        menubar->setGeometry(QRect(0, 0, 582, 22));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -73,6 +107,7 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
         pushButton->setText(QApplication::translate("MainWindow", "Exit", nullptr));
         label->setText(QApplication::translate("MainWindow", "Search", nullptr));
+        EndOrderFormat->setText(QApplication::translate("MainWindow", "End order format", nullptr));
     } // retranslateUi
 
 };

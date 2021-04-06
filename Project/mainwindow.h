@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QApplication>
 #include <QMainWindow>
 #include <QTextEdit>
 #include <QKeyEvent>
@@ -26,6 +27,7 @@ public:
 
 private slots:
     void keyPressEvent(QKeyEvent *event);
+    void on_EndOrderFormat_clicked();
 
 private:
     Ui::MainWindow *ui;
