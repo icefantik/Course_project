@@ -17,14 +17,17 @@ MainWindow::~MainWindow()
 int i_for_tabel = 0, j_for_tabel = 0;
 //Таблица вне фунции чтобы хранить две переменные
 QStandardItemModel *model = new QStandardItemModel;
-QStandardItem *item_title, *item_author, *item_price, *item_isbn;
+//Connect database with books
+QSqlDatabase db_lib = QSqlDatabase::addDatabase("QSQLITE", "lib");
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     QString title, author, price, isbn;
-
+    QStandardItem *item_title, *item_author, *item_price, *item_isbn;
     //Осуществляем запрос
-    QSqlQuery query;
+    db_lib.setDatabaseName("/home/peter/Desktop/Project/lib.db");
+    db_lib.open();
+    QSqlQuery query(db_lib);
     query.exec("SELECT title, author, price, isbn FROM books");
 
     if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
@@ -61,11 +64,24 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::on_EndOrderFormat_clicked()
 {
-    std::ofstream file("check.txt");
-    for (int tabel_column = 0; tabel_column < i_for_tabel; ++tabel_column)
-    {
-        for (int tabel_string = 0; tabel_string < 4; ++tabel_string) {
+    LoginWindow lw;
+    QFile file("/home/peter/Desktop/Project/check.bin");
+    QDataStream stream(&file);
+    //std::ofstream file("check.txt");
+    stream << "OOO \"Books shop\"";
+    QDate cd = QDate::currentDate();
+    QString date_in_file = cd.toString();
 
+    QTime ct = QTime::currentTime();
+    QString time_in_file = ct.toString();
+
+    stream << "Terminal: 00001\n"; //starting write in file
+    stream << "Cashier: " << lw.cashiers_replace<< "              " << date_in_file << " " << time_in_file;
+
+    for (int tabel_column = 0; tabel_column < model->rowCount(); ++tabel_column)
+    {
+        for (int tabel_string = 0; tabel_string < model->columnCount(); ++tabel_string) {
+            model->item(tabel_column, tabel_string)->write(stream);
         }
     }
 

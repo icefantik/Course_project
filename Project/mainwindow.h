@@ -11,7 +11,10 @@
 #include <QStandardItem>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
-#include <fstream>
+#include <QErrorMessage>
+#include <QTime>
+#include <QDate>
+#include <QFile>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

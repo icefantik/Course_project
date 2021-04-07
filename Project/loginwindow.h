@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QAbstractButton>
+#include "mainwindow.h"
 
 namespace Ui {
 class LoginWindow;
@@ -14,6 +15,7 @@ class LoginWindow : public QDialog
 
 public:
     int close_window = 0;
+    QString cashiers_replace;
     explicit LoginWindow(QWidget *parent = nullptr);
     ~LoginWindow();
 
@@ -22,6 +24,7 @@ private slots:
 
 private:
     Ui::LoginWindow *ui;
+    MainWindow *mainWindow;
 };
 
 #endif // LOGINWINDOW_H
