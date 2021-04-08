@@ -35,11 +35,6 @@ void LoginWindow::on_pushButton_clicked()
         password_cashiers = db_cas.value(2).toString();
         surname_cashiers = db_cas.value(3).toString();
         if (Login == login_cashiers && Password == password_cashiers) {
-            /**QMessageBox msgBox;
-            msgBox.setWindowTitle("Message");
-            msgBox.setText("You are successfully logged in");
-            msgBox.exec();*/
-            //LoginWindow lw;
             cashiers_replace = surname_cashiers;
 
             this->close();
