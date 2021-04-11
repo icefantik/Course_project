@@ -5,8 +5,12 @@
 #include <string>
 #include <QStandardItemModel>
 #include <QtGui>
+#include <QTime>
+#include <QDate>
 
 #include <iostream>
+#include <vector>
+#include <bits/stdc++.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,86 +24,133 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-std::fstream order_file("order.txt");
-
-QString nameBookFromOrder()
+unsigned int indexStartCount(std::string line)
 {
-    QString title;
-    std::string string_from_file;
-    order_file >> string_from_file;
-    std::cout << string_from_file;
-    for (int i = 0; string_from_file[i] != '|'; ++i) {
-        title += string_from_file[i];
-    }
-    return title;
+    unsigned int i;
+    for (i = line.length()-1; line[i] != '|'; --i)
+        ;
+    return i;
 }
 
+std::string priceString(int start_price_index, std::string line)
+{
+    std::string result_str;
+    for (int i = start_price_index+1; line[i] != '\0'; ++i) {
+        result_str += line[i];
+    }
+    return result_str;
+}
+
+int sizeTableView = 0;
+std::vector <int> set_price;
+QStandardItemModel *model = new QStandardItemModel;
 QSqlDatabase db_lib = QSqlDatabase::addDatabase("QSQLITE", "lib_order");
 
 void MainWindow::on_pushButton_clicked()
 {
+    std::ofstream order_file("order.txt", std::ios::app);
+
+    //order_file << "order has been paid";
+
+    order_file.close();
+
+    QDate cd = QDate::currentDate();
+    QString date_in_file = cd.toString();
+
+    QTime ct = QTime::currentTime();
+    QString time_in_file = ct.toString();
+
     std::ofstream final_order("final_order.txt");
-    int summ_for_score = 0, number_order = 1, account_number = 0;
-    QString title, author, price, isbn;
-    db_lib.setDatabaseName("/home/peter/Desktop/Course_Project/lib.db");
-    db_lib.open();
-    QSqlQuery lib(db_lib);
-    lib.exec("SELECT title, author, price, isbn FROM books");
-    final_order << "Provider: ";
-    final_order << "Invoice for payment " << account_number << '\n';
-    final_order << "Number" << '\t' << "Products" << '\t' << "Price" << '\n'; //symbyl number of order
-    while (lib.next())
+    int summ_for_score = 0, account_number = 0, number_order = 0;
+
+    final_order << "Provider: " << "\n";
+    final_order << "Invoice for payment: " << account_number << '\n';
+    final_order << "Number\t\tProducts\tPrice\n\n"; //symbyl number of order
+    QModelIndex index;
+    std::cout << sizeTableView;
+    for (int i = 0; i < sizeTableView; ++i)
     {
-        title = lib.value(0).toString();
-        author = lib.value(1).toString();
-        price = lib.value(2).toString();
-        isbn = lib.value(3).toString();
-        if (title == nameBookFromOrder())
-        {
-            final_order << number_order << ' ' << title.toStdString() << ' ' << price.toStdString() << '\n';
-            summ_for_score += std::stoi(price.toStdString());
-        }
+        final_order << number_order << ". ";
+
+        index = model->index(i, 0); //index title
+        final_order << index.data().toString().toStdString() << "..................";
+        index = model->index(i, 2); //index price
+        final_order << set_price[i] << '*' << index.data().toString().toStdString() << '=' << set_price[i] * std::stoi(index.data().toString().toStdString()) << '\n';
+
+        summ_for_score += set_price[i] * std::stoi(index.data().toString().toStdString());
+
+       ++number_order;
     }
-    final_order << "Total: " << summ_for_score << '\n' << "Total vat amount: " << (summ_for_score * 20)/100 + summ_for_score;
-    order_file << "order has been paid";
+    final_order << "\nTotal: " << summ_for_score << '\n' << "Total vat amount: " << (summ_for_score * 20)/100 + summ_for_score << '\n';
+    final_order << date_in_file.toStdString() << ' ' << time_in_file.toStdString() << '\n';
+    final_order.close();
 }
 
-QStandardItemModel *model = new QStandardItemModel;
-QSqlDatabase db_order = QSqlDatabase::addDatabase("QSQLITE", "order");
 void MainWindow::startMainWindow()
 {
-    QString title_lib, author_lib, price_lib, isbn_lib, title_order, author_order, price_order, isbn_order;
-    QStandardItem *item_title, *item_author, *item_price, *item_isbn;
+    QString title_lib, author_lib, price_lib, count_lib, number_of_remaining;
+    QStandardItem *item_title, *item_author, *item_price, *item_count;
     //Осуществляем запрос
-    db_lib.setDatabaseName("/home/peter/Desktop/Project/lib.db");
+    db_lib.setDatabaseName("/home/peter/Desktop/Course_Project/lib.db");
     db_lib.open();
-    QSqlQuery lib(db_lib);
-    lib.exec("SELECT title, author, price, isbn FROM books");
-
-    /*db_order.setDatabaseName("/home/peter/Desktop/Project/lib.db");
-    db_order.open();
-    QSqlQuery order(db_order);
-    order.exec("SELECT title, author, price, isbn FROM books"); */
-
-    for (int i_for_tabel = 0; lib.next(); ++i_for_tabel)
+    QSqlQuery lib(db_lib); QSqlQuery lib_num(db_lib);
+    lib.exec("SELECT title, author, price, count FROM books");
+    std::string line, num_transl;
+    int i_for_tabel, numb;
+    for (i_for_tabel = 0; lib.next();)
     {
         title_lib = lib.value(0).toString(); author_lib = lib.value(1).toString();
-        price_lib = lib.value(2).toString(); isbn_lib = lib.value(3).toString();
+        price_lib = lib.value(2).toString(); count_lib = lib.value(3).toString();
 
-        //title_order = order.value(0).toString(); author_order = order.value(1).toString();
-        //price_order = order.value(2).toString(); isbn_order = order.value(3).toString();
-        //if (title_lib == title_order) Сравниваем название книги из библеотеки и из заказа и добавляем в табицу просмотра
-        //{
-            item_title = new QStandardItem(title_lib); item_author = new QStandardItem(author_lib);
-            item_price = new QStandardItem(price_lib); item_isbn = new QStandardItem(isbn_lib);
-            model->setItem(i_for_tabel, 0, item_title); model->setItem(i_for_tabel, 1, item_author);
-            model->setItem(i_for_tabel, 2, item_price); model->setItem(i_for_tabel, 3, item_isbn);
-        //}
+        std::fstream order_file("order.txt");
+        while (getline(order_file, line))
+        {
+            QString str = QString::fromStdString(line);
+            if (line == "order has been paid")
+            {
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Message");
+                msgBox.setText("The order was marked as already paid");
+                msgBox.exec();
+                this->close();
+            }
+            else if (str.indexOf(title_lib) == 0 && (std::stoi(count_lib.toStdString()) - std::stoi(priceString(indexStartCount(line), line))) >= 0)
+            {
+                item_title = new QStandardItem(title_lib); item_author = new QStandardItem(author_lib);
+                item_price = new QStandardItem(price_lib); item_count = new QStandardItem(count_lib);
+
+                numb = std::stoi(count_lib.toStdString()) - std::stoi(priceString(indexStartCount(line), line));
+
+                model->setItem(i_for_tabel, 0, item_title); model->setItem(i_for_tabel, 1, item_author);
+                model->setItem(i_for_tabel, 2, item_price); model->setItem(i_for_tabel, 3, item_count);
+                ++i_for_tabel;
+
+                set_price.push_back(std::stoi(count_lib.toStdString()));
+
+                lib_num.prepare("UPDATE books set count = :count WHERE title = :title");
+                lib_num.bindValue(":count", numb);
+                lib_num.bindValue(":title", title_lib);
+                lib_num.exec();
+                break;
+            }
+            else if (std::stoi(count_lib.toStdString()) - std::stoi(priceString(indexStartCount(line), line)) < 0)
+            {
+                QMessageBox msgBox;
+                msgBox.setWindowTitle("Message");
+                msgBox.setText("The number of books in the order is more than in stock");
+                msgBox.exec();
+            }
+        }
+        order_file.close();
+        /*if (order_already == 1) {
+            break;
+        }*/
     }
+    sizeTableView = i_for_tabel;
     model->setHeaderData(0, Qt::Horizontal, "title book", Qt::DisplayRole);
     model->setHeaderData(1, Qt::Horizontal, "author", Qt::DisplayRole);
     model->setHeaderData(2, Qt::Horizontal, "price", Qt::DisplayRole);
-    model->setHeaderData(3, Qt::Horizontal, "number of books", Qt::DisplayRole);
+    model->setHeaderData(3, Qt::Horizontal, "count books", Qt::DisplayRole);
     ui->tableView->setModel(model);
     ui->tableView->resizeRowsToContents();
     ui->tableView->resizeColumnsToContents();
