@@ -88,7 +88,7 @@ void MainWindow::startMainWindow()
 
         //title_order = order.value(0).toString(); author_order = order.value(1).toString();
         //price_order = order.value(2).toString(); isbn_order = order.value(3).toString();
-        //if (title_lib == )
+        //if (title_lib == title_order) Сравниваем название книги из библеотеки и из заказа и добавляем в табицу просмотра
         //{
             item_title = new QStandardItem(title_lib); item_author = new QStandardItem(author_lib);
             item_price = new QStandardItem(price_lib); item_isbn = new QStandardItem(isbn_lib);
