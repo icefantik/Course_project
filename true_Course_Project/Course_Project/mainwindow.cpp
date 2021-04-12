@@ -42,7 +42,9 @@ std::string priceString(int start_price_index, std::string line)
 }
 
 int sizeTableView = 0;
-std::vector <int> set_price;
+const int sizeMassTitles = 1000;
+QString *massTitles = new QString[sizeMassTitles];
+std::vector <int> massSubOrder, massSubDb;
 QStandardItemModel *model = new QStandardItemModel;
 QSqlDatabase db_lib = QSqlDatabase::addDatabase("QSQLITE", "lib_order");
 
@@ -63,23 +65,30 @@ void MainWindow::on_pushButton_clicked()
     std::ofstream final_order("final_order.txt");
     int summ_for_score = 0, account_number = 0, number_order = 0;
 
+    db_lib.setDatabaseName("/home/peter/Desktop/Course_Project/lib.db");
+    db_lib.open();
+    QSqlQuery lib_num(db_lib);
+
     final_order << "Provider: " << "\n";
     final_order << "Invoice for payment: " << account_number << '\n';
     final_order << "Number\t\tProducts\tPrice\n\n"; //symbyl number of order
     QModelIndex index;
-    std::cout << sizeTableView;
     for (int i = 0; i < sizeTableView; ++i)
     {
         final_order << number_order << ". ";
-
         index = model->index(i, 0); //index title
         final_order << index.data().toString().toStdString() << "..................";
         index = model->index(i, 2); //index price
-        final_order << set_price[i] << '*' << index.data().toString().toStdString() << '=' << set_price[i] * std::stoi(index.data().toString().toStdString()) << '\n';
 
-        summ_for_score += set_price[i] * std::stoi(index.data().toString().toStdString());
+        final_order << massSubDb[i] << '*' << index.data().toString().toStdString() << '=' << massSubDb[i] * std::stoi(index.data().toString().toStdString()) << '\n';
+        summ_for_score += massSubDb[i] * std::stoi(index.data().toString().toStdString());
 
-       ++number_order;
+        lib_num.prepare("UPDATE books set count = :count WHERE title = :title");
+        lib_num.bindValue(":count", massSubDb[i] - massSubOrder[i]);
+        lib_num.bindValue(":title", massTitles[i]);
+        lib_num.exec();
+
+        ++number_order;
     }
     final_order << "\nTotal: " << summ_for_score << '\n' << "Total vat amount: " << (summ_for_score * 20)/100 + summ_for_score << '\n';
     final_order << date_in_file.toStdString() << ' ' << time_in_file.toStdString() << '\n';
@@ -123,21 +132,19 @@ void MainWindow::startMainWindow()
 
                 model->setItem(i_for_tabel, 0, item_title); model->setItem(i_for_tabel, 1, item_author);
                 model->setItem(i_for_tabel, 2, item_price); model->setItem(i_for_tabel, 3, item_count);
+
+                massTitles[i_for_tabel] = title_lib;
+                massSubDb.push_back(std::stoi(count_lib.toStdString())); //count books form database
+                massSubOrder.push_back(std::stoi(priceString(indexStartCount(line), line))); //count books form order
+
                 ++i_for_tabel;
-
-                set_price.push_back(std::stoi(count_lib.toStdString()));
-
-                lib_num.prepare("UPDATE books set count = :count WHERE title = :title");
-                lib_num.bindValue(":count", numb);
-                lib_num.bindValue(":title", title_lib);
-                lib_num.exec();
                 break;
             }
             else if (std::stoi(count_lib.toStdString()) - std::stoi(priceString(indexStartCount(line), line)) < 0)
             {
                 QMessageBox msgBox;
                 msgBox.setWindowTitle("Message");
-                msgBox.setText("The number of books in the order is more than in stock");
+                msgBox.setText("The number of books in the order is more than in stock: " + title_lib);
                 msgBox.exec();
             }
         }
