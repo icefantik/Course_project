@@ -16,17 +16,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    adminwindow.cpp \
     loginwindow.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    orderwindow.cpp
 
 HEADERS += \
+    adminwindow.h \
     loginwindow.h \
-    mainwindow.h
+    mainwindow.h \
+    orderwindow.h
 
 FORMS += \
+    adminwindow.ui \
+    dialogAddOrChange.ui \
     loginwindow.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    orderwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

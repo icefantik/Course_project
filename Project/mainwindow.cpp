@@ -3,12 +3,14 @@
 #include "loginwindow.h"
 #include <fstream>
 #include <QDebug>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    orderWindow = new orderwindow;
 }
 
 MainWindow::~MainWindow()
@@ -30,7 +32,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     db_lib.setDatabaseName("/home/peter/Desktop/Project/lib.db");
     db_lib.open();
     QSqlQuery query(db_lib);
-    query.exec("SELECT title, author, price, isbn FROM books");
+    query.exec("SELECT title, author, price, count FROM books");
 
     if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
     {
@@ -58,9 +60,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             msgBox.exec();
         }
     }
-    ui->tableView->setModel(model);
-    ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
+    ui->searchTableView->setModel(model);
+    ui->searchTableView->resizeRowsToContents();
+    ui->searchTableView->resizeColumnsToContents();
 }
 
 
@@ -81,15 +83,20 @@ void MainWindow::on_EndOrderFormat_clicked()
         file << "Cashier: " << lw.cashiers_replace.toStdString() << "              " << date_in_file.toStdString() << " " << time_in_file.toStdString() << "\n";
         QModelIndex index;
         //QStringList list;
+        int summ_order = 0, count_product = 0;
         for (int tabel_column = 0; tabel_column < model->rowCount(); ++tabel_column)
         {
-            for (int tabel_string = 0; tabel_string < model->columnCount(); ++tabel_string) {
-                index = model->index(tabel_column, tabel_string);
-                //list.append(index.data().toString());
-                file << index.data().toString().toStdString() << ' ';
-            }
+            index = model->index(tabel_column, 1);
+            file << index.data().toString().toStdString() << "...............";
+            index = model->index(tabel_column, 3);
+            file << index.data().toString().toStdString();
+            summ_order += std::stoi(index.data().toString().toStdString());
+            ++count_product;
             file << "\n";
         }
+        file << "NDS 10/110";
+        file << "Count product in receipt: " << count_product;
+        file << "Summ NDS 10/100: " << (summ_order * 20) / 100;
         file.close();
     }
     else
@@ -97,6 +104,22 @@ void MainWindow::on_EndOrderFormat_clicked()
         QMessageBox errEntryBox;
         errEntryBox.setWindowTitle("Error");
         errEntryBox.setText("File not open");
+        errEntryBox.exec();
+    }
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    std::fstream order_file("order.txt");
+    if (order_file.is_open()) {
+        this->close();
+        orderWindow->show();
+        //orderwindow orderwin;
+        //orderwin.startMainWindow();
+    } else {
+        QMessageBox errEntryBox;
+        errEntryBox.setWindowTitle("Message");
+        errEntryBox.setText("You did not put the order file in the folder");
         errEntryBox.exec();
     }
 }

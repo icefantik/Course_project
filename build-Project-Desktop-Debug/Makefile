@@ -52,15 +52,23 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../Project/loginwindow.cpp \
+SOURCES       = ../Project/adminwindow.cpp \
+		../Project/loginwindow.cpp \
 		../Project/main.cpp \
-		../Project/mainwindow.cpp moc_loginwindow.cpp \
-		moc_mainwindow.cpp
-OBJECTS       = loginwindow.o \
+		../Project/mainwindow.cpp \
+		../Project/orderwindow.cpp moc_adminwindow.cpp \
+		moc_loginwindow.cpp \
+		moc_mainwindow.cpp \
+		moc_orderwindow.cpp
+OBJECTS       = adminwindow.o \
+		loginwindow.o \
 		main.o \
 		mainwindow.o \
+		orderwindow.o \
+		moc_adminwindow.o \
 		moc_loginwindow.o \
-		moc_mainwindow.o
+		moc_mainwindow.o \
+		moc_orderwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -139,10 +147,14 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../Project/Project.pro ../Project/loginwindow.h \
-		../Project/mainwindow.h ../Project/loginwindow.cpp \
+		../Project/Project.pro ../Project/adminwindow.h \
+		../Project/loginwindow.h \
+		../Project/mainwindow.h \
+		../Project/orderwindow.h ../Project/adminwindow.cpp \
+		../Project/loginwindow.cpp \
 		../Project/main.cpp \
-		../Project/mainwindow.cpp
+		../Project/mainwindow.cpp \
+		../Project/orderwindow.cpp
 QMAKE_TARGET  = Project
 DESTDIR       = 
 TARGET        = Project
@@ -151,7 +163,7 @@ TARGET        = Project
 first: all
 ####### Build rules
 
-Project: ui_loginwindow.h ui_mainwindow.h $(OBJECTS)  
+Project: ui_adminwindow.h ui_dialogAddOrChange.h ui_loginwindow.h ui_mainwindow.h ui_orderwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../Project/Project.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -328,9 +340,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Project/loginwindow.h ../Project/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../Project/loginwindow.cpp ../Project/main.cpp ../Project/mainwindow.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../Project/loginwindow.ui ../Project/mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../Project/adminwindow.h ../Project/loginwindow.h ../Project/mainwindow.h ../Project/orderwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../Project/adminwindow.cpp ../Project/loginwindow.cpp ../Project/main.cpp ../Project/mainwindow.cpp ../Project/orderwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../Project/adminwindow.ui ../Project/dialogAddOrChange.ui ../Project/loginwindow.ui ../Project/mainwindow.ui ../Project/orderwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -362,26 +374,48 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_loginwindow.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_adminwindow.cpp moc_loginwindow.cpp moc_mainwindow.cpp moc_orderwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_loginwindow.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_adminwindow.cpp moc_loginwindow.cpp moc_mainwindow.cpp moc_orderwindow.cpp
+moc_adminwindow.cpp: ../Project/adminwindow.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/peter/Desktop/build-Project-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/peter/Desktop/Project -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Project/adminwindow.h -o moc_adminwindow.cpp
+
 moc_loginwindow.cpp: ../Project/loginwindow.h \
+		../Project/mainwindow.h \
+		../Project/orderwindow.h \
+		../Project/adminwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/peter/Desktop/build-Project-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/peter/Desktop/Project -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Project/loginwindow.h -o moc_loginwindow.cpp
 
 moc_mainwindow.cpp: ../Project/mainwindow.h \
+		../Project/orderwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/peter/Desktop/build-Project-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/peter/Desktop/Project -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Project/mainwindow.h -o moc_mainwindow.cpp
+
+moc_orderwindow.cpp: ../Project/orderwindow.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/peter/Desktop/build-Project-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/peter/Desktop/Project -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../Project/orderwindow.h -o moc_orderwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_loginwindow.h ui_mainwindow.h
+compiler_uic_make_all: ui_adminwindow.h ui_dialogAddOrChange.h ui_loginwindow.h ui_mainwindow.h ui_orderwindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_loginwindow.h ui_mainwindow.h
+	-$(DEL_FILE) ui_adminwindow.h ui_dialogAddOrChange.h ui_loginwindow.h ui_mainwindow.h ui_orderwindow.h
+ui_adminwindow.h: ../Project/adminwindow.ui \
+		/usr/lib/qt5/bin/uic
+	/usr/lib/qt5/bin/uic ../Project/adminwindow.ui -o ui_adminwindow.h
+
+ui_dialogAddOrChange.h: ../Project/dialogAddOrChange.ui \
+		/usr/lib/qt5/bin/uic
+	/usr/lib/qt5/bin/uic ../Project/dialogAddOrChange.ui -o ui_dialogAddOrChange.h
+
 ui_loginwindow.h: ../Project/loginwindow.ui \
 		/usr/lib/qt5/bin/uic
 	/usr/lib/qt5/bin/uic ../Project/loginwindow.ui -o ui_loginwindow.h
@@ -389,6 +423,10 @@ ui_loginwindow.h: ../Project/loginwindow.ui \
 ui_mainwindow.h: ../Project/mainwindow.ui \
 		/usr/lib/qt5/bin/uic
 	/usr/lib/qt5/bin/uic ../Project/mainwindow.ui -o ui_mainwindow.h
+
+ui_orderwindow.h: ../Project/orderwindow.ui \
+		/usr/lib/qt5/bin/uic
+	/usr/lib/qt5/bin/uic ../Project/orderwindow.ui -o ui_orderwindow.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -400,24 +438,49 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
+adminwindow.o: ../Project/adminwindow.cpp ../Project/adminwindow.h \
+		ui_adminwindow.h \
+		../Project/loginwindow.h \
+		../Project/mainwindow.h \
+		../Project/orderwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o adminwindow.o ../Project/adminwindow.cpp
+
 loginwindow.o: ../Project/loginwindow.cpp ../Project/loginwindow.h \
 		../Project/mainwindow.h \
+		../Project/orderwindow.h \
+		../Project/adminwindow.h \
 		ui_loginwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o loginwindow.o ../Project/loginwindow.cpp
 
 main.o: ../Project/main.cpp ../Project/mainwindow.h \
-		../Project/loginwindow.h
+		../Project/orderwindow.h \
+		../Project/loginwindow.h \
+		../Project/adminwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../Project/main.cpp
 
 mainwindow.o: ../Project/mainwindow.cpp ../Project/mainwindow.h \
-		ui_mainwindow.h
+		../Project/orderwindow.h \
+		ui_mainwindow.h \
+		../Project/loginwindow.h \
+		../Project/adminwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../Project/mainwindow.cpp
+
+orderwindow.o: ../Project/orderwindow.cpp ../Project/mainwindow.h \
+		../Project/orderwindow.h \
+		ui_orderwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o orderwindow.o ../Project/orderwindow.cpp
+
+moc_adminwindow.o: moc_adminwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_adminwindow.o moc_adminwindow.cpp
 
 moc_loginwindow.o: moc_loginwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_loginwindow.o moc_loginwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_orderwindow.o: moc_orderwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_orderwindow.o moc_orderwindow.cpp
 
 ####### Install
 

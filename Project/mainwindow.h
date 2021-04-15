@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "orderwindow.h"
+
 #include <QApplication>
 #include <QMainWindow>
 #include <QTextEdit>
@@ -25,12 +27,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    orderwindow *orderWindow;
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
     void keyPressEvent(QKeyEvent *event);
     void on_EndOrderFormat_clicked();
+    void on_pushButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;

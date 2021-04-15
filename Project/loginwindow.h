@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QAbstractButton>
 #include "mainwindow.h"
+#include "adminwindow.h"
+#include "orderwindow.h"
 
 namespace Ui {
 class LoginWindow;
@@ -24,6 +26,8 @@ private slots:
 
 private:
     Ui::LoginWindow *ui;
+    orderwindow *orderWindow;
+    adminwindow *adminWindow;
     MainWindow *mainWindow;
 };
 
